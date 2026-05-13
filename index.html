@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宜蘭高商校犬 Ruby 醫療評估與替代方案報告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 45vh;
+            min-height: 350px;
+            max-height: 500px;
+        }
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            scroll-behavior: smooth;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdfbf7; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d9c5b2; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #bda894; 
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #cf7b7b, #829b8c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#fdfbf7',
+                            card: '#ffffff',
+                            textMain: '#3d342b',
+                            textMuted: '#7a6a5e',
+                            accent: '#829b8c',       /* Sage green */
+                            accentLight: '#dbe4de',
+                            highlight: '#d9c5b2',    /* Soft brown */
+                            danger: '#cf7b7b',       /* Muted Red */
+                            dangerLight: '#f4dcdc',
+                            warning: '#eab308'       /* Yellow */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-bg text-brand-textMain antialiased">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-brand-bg/90 backdrop-blur-md border-b border-brand-highlight/30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl">🐕</span>
+                    <span class="font-bold text-lg tracking-wider text-brand-textMain">Ruby 轉診決策系統</span>
+                </div>
+                <div class="hidden md:flex space-x-6 text-sm font-medium text-brand-textMuted">
+                    <a href="#summary" class="hover:text-brand-accent transition-colors">診斷分析</a>
+                    <a href="#insurance" class="hover:text-brand-danger transition-colors">保險缺口</a>
+                    <a href="#alternatives" class="hover:text-brand-accent transition-colors">替代選項</a>
+                    <a href="#costs" class="hover:text-brand-accent transition-colors">經費試算</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center max-w-3xl mx-auto">
+            <div class="inline-block bg-brand-accent/20 text-brand-accent px-3 py-1 rounded-full text-sm font-bold mb-4">
+                深度專案報告 v2.0
+            </div>
+            <h1 class="text-4xl font-extrabold text-brand-textMain mb-4">宜蘭高商校犬 Ruby 醫療策略與備案分析</h1>
+            <p class="text-lg text-brand-textMuted leading-relaxed">
+                針對 Ruby 的「左側膝蓋骨內側脫位 Grade IV」現況，本報告整合了原有的小王子與六福醫院評估，並引入了保險理賠條件限制，進一步探討其他潛在的醫療資源配置選項。
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 space-y-16">
+
+        <!-- Initial Assessment Recap -->
+        <section id="summary" class="bg-brand-card rounded-2xl shadow-sm border border-brand-highlight/20 overflow-hidden">
+            <div class="bg-brand-accent/10 px-8 py-4 border-b border-brand-highlight/20 flex items-center justify-between">
+                <h2 class="text-2xl font-bold flex items-center"><span class="mr-3">📋</span>主管前次評估摘要</h2>
+            </div>
+            <div class="p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-bold text-brand-textMain mb-3 border-b-2 border-brand-highlight pb-1 inline-block">病況嚴重度：Grade IV</h3>
+                        <p class="text-brand-textMuted text-sm leading-relaxed mb-4">
+                            屬於最高階的骨科脫位，伴隨O型腿變形、長期跛腳與疼痛。需要進行截骨/骨板矯正，非一般常規軟組織手術。
+                        </p>
+                        <h3 class="text-lg font-bold text-brand-textMain mb-3 border-b-2 border-brand-highlight pb-1 inline-block">初步兩難抉擇</h3>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-start">
+                                <span class="text-brand-accent mr-2">🟢</span>
+                                <span><strong>台北小王子：</strong> 具備高階骨科與術後復健系統，能降低再脫位機率。（預估 6-12 萬起）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-brand-highlight mr-2">🟡</span>
+                                <span><strong>宜蘭六福：</strong> 年紀大不耐車程的首選，在地照護便利，預算彈性較高。（預估 3.5-7 萬）</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-brand-bg p-5 rounded-xl border border-brand-highlight/30">
+                        <h3 class="font-bold text-brand-danger mb-2">⚠️ 核心考驗</h3>
+                        <p class="text-sm text-brand-textMuted leading-relaxed">
+                            主管面臨的最大考驗在於<strong>「高階醫療技術需求」</strong>與<strong>「現有經費/保險理賠上限」</strong>之間的巨大落差。小王子技術雖好但費用高昂，六福費用可控但高難度矯正經驗可能較少。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Insurance Analysis -->
+        <section id="insurance" class="bg-brand-dangerLight/20 rounded-2xl shadow-sm border border-brand-danger/30 p-8">
+            <div class="flex items-center mb-6">
+                <span class="text-3xl mr-3">🛡️</span>
+                <h2 class="text-3xl font-bold text-brand-danger">現有保單理賠缺口分析</h2>
+            </div>
+            <p class="text-brand-textMuted mb-6">根據校方提供的寵物醫療費用保險單，理賠條件極度受限，無論選擇哪一間醫院，皆會產生龐大的自費缺口。</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-lg border border-brand-danger/20 text-center">
+                    <p class="text-xs text-brand-textMuted mb-1">每次手術最高理賠</p>
+                    <p class="text-xl font-bold text-brand-danger">20,000 元</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg border border-brand-danger/20 text-center">
+                    <p class="text-xs text-brand-textMuted mb-1">每次住院最高理賠</p>
+                    <p class="text-xl font-bold text-brand-danger">5,000 元</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg border border-brand-danger/20 text-center">
+                    <p class="text-xs text-brand-textMuted mb-1">累積最高賠償限額</p>
+                    <p class="text-xl font-bold text-brand-textMain">28,000 元</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg border border-brand-danger/20 text-center">
+                    <p class="text-xs text-brand-textMuted mb-1">自負額條件</p>
+                    <p class="text-xl font-bold text-brand-textMain">損失之 20%</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-brand-danger/40">
+                <h3 class="font-bold text-brand-textMain mb-2">結論與衝擊</h3>
+                <p class="text-sm text-brand-textMuted">
+                    因為保險總額上限僅有 <strong class="text-brand-danger">28,000元</strong>，若選擇小王子（抓低標約8萬），校方自籌款將高達 <strong class="text-brand-textMain">52,000元</strong> 以上。若Ruby體重偏大需特殊骨板，費用與缺口將更為驚人。
+                </p>
+            </div>
+        </section>
+
+        <!-- Alternative Options (Deep Research) -->
+        <section id="alternatives">
+            <h2 class="text-3xl font-bold mb-2">深度研究：其他選項與替代策略</h2>
+            <p class="text-brand-textMuted mb-8">面對技術與經費的兩難，我們為校方提出以下三種戰略性思考方向：</p>
+
+            <div class="space-y-6">
+                <!-- Option 1 -->
+                <div class="bg-brand-card p-6 rounded-2xl shadow-sm border-l-4 border-brand-accent hover:shadow-md transition-shadow">
+                    <div class="flex items-start">
+                        <div class="bg-brand-accentLight p-3 rounded-full mr-4 text-brand-accent">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-brand-textMain mb-2">策略一：尋求同級別專科醫院的「第二意見」 (Second Opinion)</h3>
+                            <p class="text-sm text-brand-textMuted mb-3">
+                                除了小王子，台北仍有其他高階骨科指標醫院。建議主管先帶著Ruby的X光片（不帶狗）前往諮詢，比較手術方案與報價。
+                            </p>
+                            <ul class="text-sm space-y-2 text-brand-textMain">
+                                <li><strong>大星光動物醫院 (信義區)：</strong> 核心專長即為骨科與神經外科，為高難度截骨矯正的另一權威選擇。</li>
+                                <li><strong>長青動物醫院 (萬華區)：</strong> 體制完整的全預約制醫院。數據顯示，此院為宜蘭跨縣市醫療接送的「標準熱門路線」。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Option 2 -->
+                <div class="bg-brand-card p-6 rounded-2xl shadow-sm border-l-4 border-brand-warning hover:shadow-md transition-shadow">
+                    <div class="flex items-start">
+                        <div class="bg-yellow-100 p-3 rounded-full mr-4 text-brand-warning">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-brand-textMain mb-2">策略二：「外聘專科醫師」在地主刀模式 (Mobile Surgery)</h3>
+                            <p class="text-sm text-brand-textMuted mb-3">
+                                向宜蘭六福動物醫院林院長探詢：是否能由六福提供手術場地與基礎麻醉，並外聘具備 Grade IV 經驗的「骨科專科醫師」來宜蘭主刀？
+                            </p>
+                            <div class="bg-brand-bg p-3 rounded text-sm border border-brand-highlight/20">
+                                <strong>優勢：</strong> 完美結合「台北技術」與「宜蘭照護」。技術由專家把關，而場地、住院費則按宜蘭當地標準收取，且免去Ruby長途車程的高壓與緊迫。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Cost & Insurance Gap Analysis -->
+        <section id="costs" class="bg-brand-card rounded-2xl shadow-sm border border-brand-highlight/20 p-8">
+            <div class="mb-6">
+                <h2 class="text-3xl font-bold mb-2">經費試算與「自籌缺口」分析模型</h2>
+                <p class="text-brand-textMuted">
+                    此圖表模擬了在保險最高理賠限額（2.8萬）下，不同醫院方案的實際自費負擔。請調整住院天數以觀察缺口變化。
+                </p>
+            </div>
+
+            <!-- Interactive Controls -->
+            <div class="mb-8 p-6 bg-brand-bg rounded-xl border border-brand-highlight/30">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <label for="daysSlider" class="block text-sm font-bold text-brand-textMain mb-1">術後住院天數設定</label>
+                        <p class="text-xs text-brand-textMuted">高階截骨手術通常需要較長的觀察期 (3-7天)。</p>
+                    </div>
+                    <div class="text-3xl font-extrabold text-brand-accent" id="daysValueDisplay">5 <span class="text-lg text-brand-textMuted font-normal">天</span></div>
+                </div>
+                <input type="range" id="daysSlider" min="0" max="14" value="5" class="w-full h-2 bg-brand-highlight rounded-lg appearance-none cursor-pointer accent-brand-accent">
+                <div class="flex justify-between text-xs text-brand-textMuted mt-2 px-1">
+                    <span>0天</span>
+                    <span>7天</span>
+                    <span>14天</span>
+                </div>
+            </div>
+
+            <!-- Summary Badges -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <!-- Taipei Estimates -->
+                <div class="col-span-2 grid grid-cols-2 gap-2 p-4 border border-brand-highlight rounded-lg relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-brand-highlight"></div>
+                    <div class="col-span-2 mb-2"><p class="text-sm font-bold text-brand-textMain">方案 A：台北 小王子 (高階估算)</p></div>
+                    <div>
+                        <p class="text-xs text-brand-textMuted mb-1">醫療總額預估</p>
+                        <p class="text-lg font-bold" id="taipeiTotal">$ 98,500</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-brand-textMuted mb-1 text-brand-danger">校方需自籌缺口</p>
+                        <p class="text-xl font-bold text-brand-danger" id="taipeiGap">$ 70,500</p>
+                    </div>
+                </div>
+
+                <!-- Yilan Estimates -->
+                <div class="col-span-2 grid grid-cols-2 gap-2 p-4 border border-brand-accent rounded-lg relative overflow-hidden bg-brand-accentLight/5">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-brand-accent"></div>
+                    <div class="col-span-2 mb-2"><p class="text-sm font-bold text-brand-textMain">方案 B：宜蘭 六福 (在地估算)</p></div>
+                    <div>
+                        <p class="text-xs text-brand-textMuted mb-1">醫療總額預估</p>
+                        <p class="text-lg font-bold" id="yilanTotal">$ 52,500</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-brand-textMuted mb-1 text-brand-danger">校方需自籌缺口</p>
+                        <p class="text-xl font-bold text-brand-danger" id="yilanGap">$ 24,500</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="chart-container">
+                <canvas id="gapChart"></canvas>
+            </div>
+            
+            <p class="text-xs text-center text-brand-textMuted mt-4">
+                *計算邏輯：保險理賠設定最高天花板為 $28,000。總費用超過此數字的部分，皆列入紅色「自籌缺口」。實際手術費用請以醫院正式報價單為準。
+            </p>
+        </section>
+
+    </main>
+
+    <footer class="bg-brand-textMain text-brand-bg py-8 text-center text-sm">
+        <p>宜蘭高商校犬專案小組決策參考資料。</p>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        //        document.addEventListener('DOMContentLoaded', () => {
+            // Data Model - Base costs adjusted to reflect realistic Grade IV Orthopedic estimates
+            // [術前血檢影像, 氣麻與耗材, 截骨矯正手術費]
+            const baseCostsTaipei = [8000, 15000, 60000]; // Total 83k base
+            const baseCostsYilan =  [5000, 10000, 30000]; // Total 45k base
+            
+            // Daily hospitalization rate (ICU vs General Ward)
+            const dailyRateTaipei = 3500;
+            const dailyRateYilan = 1500;
+
+            // Insurance Rule
+            const maxInsuranceCoverage = 28000;
+
+            // State
+            let currentDays = 5;
+
+            // DOM Elements
+            const slider = document.getElementById('daysSlider');
+            const daysDisplay = document.getElementById('daysValueDisplay');
+            const taipeiTotalDisplay = document.getElementById('taipeiTotal');
+            const taipeiGapDisplay = document.getElementById('taipeiGap');
+            const yilanTotalDisplay = document.getElementById('yilanTotal');
+            const yilanGapDisplay = document.getElementById('yilanGap');
+
+            // Utilities
+            const formatCurrency = (num) => '$ ' + num.toLocaleString('zh-TW');
+
+            // Calculation Logic
+            const calculateFinancials = (baseArray, dailyRate, days) => {
+                const baseSum = baseArray.reduce((a, b) => a + b, 0);
+                const totalCost = baseSum + (dailyRate * days);
+                
+                // Simple calculation for demo: Gap is anything above 28,000
+                const covered = Math.min(totalCost, maxInsuranceCoverage);
+                const gap = totalCost - covered;
+                
+                return { total: totalCost, covered: covered, gap: gap };
+            };
+
+            //            const ctx = document.getElementById('gapChart').getContext('2d');
+            
+            // Colors
+            const colorCovered = '#829b8c'; // Accent (Safe/Covered)
+            const colorGap = '#cf7b7b';     // Danger (Owed/Gap)
+
+            const gapChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['方案 A：台北 小王子', '方案 B：宜蘭 六福'],
+                    datasets: [
+                        { 
+                            label: '保險可涵蓋金額 (上限2.8萬)', 
+                            data: [0, 0], 
+                            backgroundColor: colorCovered,
+                            borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 6, bottomRight: 6 }
+                        },
+                        { 
+                            label: '🔴 校方需自籌缺口', 
+                            data: [0, 0], 
+                            backgroundColor: colorGap,
+                            borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 }
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { family: 'PingFang TC' } } },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += '$' + context.parsed.y.toLocaleString('zh-TW');
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { 
+                            stacked: true, 
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) { return '$' + (value/1000) + 'k'; }
+                            },
+                            title: { display: true, text: '新台幣 (TWD)' }
+                        }
+                    },
+                    animation: { duration: 300 }
+                }
+            });
+
+            //            const updateDashboard = () => {
+                currentDays = parseInt(slider.value, 10);
+                daysDisplay.innerHTML = `${currentDays} <span class="text-lg text-brand-textMuted font-normal">天</span>`;
+                
+                const tData = calculateFinancials(baseCostsTaipei, dailyRateTaipei, currentDays);
+                const yData = calculateFinancials(baseCostsYilan, dailyRateYilan, currentDays);
+                
+                // Update text
+                taipeiTotalDisplay.innerText = formatCurrency(tData.total);
+                taipeiGapDisplay.innerText = formatCurrency(tData.gap);
+                
+                yilanTotalDisplay.innerText = formatCurrency(yData.total);
+                yilanGapDisplay.innerText = formatCurrency(yData.gap);
+
+                // Update Chart
+                gapChart.data.datasets[0].data = [tData.covered, yData.covered];
+                gapChart.data.datasets[1].data = [tData.gap, yData.gap];
+                gapChart.update();
+            };
+
+            slider.addEventListener('input', updateDashboard);
+            
+            // Initial render
+            updateDashboard();
+        });
+    </script>
+</body>
+</html>
