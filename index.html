@@ -287,7 +287,7 @@
 
     <!-- Application Logic -->
     <script>
-        //        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             // Data Model - Base costs adjusted to reflect realistic Grade IV Orthopedic estimates
             // [術前血檢影像, 氣麻與耗材, 截骨矯正手術費]
             const baseCostsTaipei = [8000, 15000, 60000]; // Total 83k base
@@ -326,7 +326,7 @@
                 return { total: totalCost, covered: covered, gap: gap };
             };
 
-            //            const ctx = document.getElementById('gapChart').getContext('2d');
+            const ctx = document.getElementById('gapChart').getContext('2d');
             
             // Colors
             const colorCovered = '#829b8c'; // Accent (Safe/Covered)
@@ -386,7 +386,7 @@
                 }
             });
 
-            //            const updateDashboard = () => {
+            const updateDashboard = () => {
                 currentDays = parseInt(slider.value, 10);
                 daysDisplay.innerHTML = `${currentDays} <span class="text-lg text-brand-textMuted font-normal">天</span>`;
                 
